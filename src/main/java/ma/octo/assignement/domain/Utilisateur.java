@@ -1,81 +1,153 @@
 package ma.octo.assignement.domain;
 
-import org.hibernate.annotations.Fetch;
+import ma.octo.assignement.domain.util.Generators;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 @Table(name = "UTILISATEUR")
 public class Utilisateur implements Serializable {
-  @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
 
-  @Column(length = 10, nullable = false, unique = true)
-  private String username;
+    @Column(length = 10, nullable = false, unique = true)
+    private String username;
 
-  @Column(length = 10, nullable = false)
-  private String gender;
+    @Column(length = 10, nullable = false)
+    private String gender;
 
-  @Column(length = 60, nullable = false)
-  private String lastname;
+    @Column(length = 60, nullable = false)
+    private String lastname;
 
-  @Column(length = 60, nullable = false)
-  private String firstname;
+    @Column(length = 60, nullable = false)
+    private String firstname;
 
-  @Temporal(TemporalType.DATE)
-  private Date birthdate;
+    @Temporal(TemporalType.DATE)
+    private Date birthdate;
 
+    public Long getId() {
+        return id;
+    }
 
-  public String getGender() {
-    return gender;
-  }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-  public void setGender(String gender) {
-    this.gender = gender;
-  }
+    public String getUsername() {
+        return username;
+    }
 
-  public String getLastname() {
-    return lastname;
-  }
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-  public void setLastname(String lastname) {
-    this.lastname = lastname;
-  }
+    public String getGender() {
+        return gender;
+    }
 
-  public String getFirstname() {
-    return firstname;
-  }
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
 
-  public void setFirstname(String firstname) {
-    this.firstname = firstname;
-  }
+    public String getLastname() {
+        return lastname;
+    }
 
-  public Date getBirthdate() {
-    return birthdate;
-  }
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
+    }
 
-  public void setBirthdate(Date birthdate) {
-    this.birthdate = birthdate;
-  }
+    public String getFirstname() {
+        return firstname;
+    }
 
-  public String getUsername() {
-    return username;
-  }
+    public void setFirstname(String firstname) {
+        this.firstname = firstname;
+    }
 
-  public void setUsername(String username) {
-    this.username = username;
-  }
+    public String getFullName(){
+        return firstname + " " + lastname;
+    }
 
-  public Long getId() {
-    return id;
-  }
+    public Date getBirthdate() {
+        return birthdate;
+    }
 
-  public void setId(Long id) {
-    this.id = id;
-  }
+    public void setBirthdate(Date birthdate) {
+        this.birthdate = birthdate;
+    }
+
+    public Utilisateur() {
+    }
+
+    public static class Builder {
+        private Long id;
+        private String username;
+        private String gender;
+        private String lastname;
+        private String firstname;
+        private Date birthdate;
+
+        public Builder() {
+        }
+
+        // Setter methods
+        public Builder setId(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder setUsername(String username) {
+            this.username = username;
+            return this;
+        }
+
+        public Builder setGender(String gender) {
+            this.gender = gender;
+            return this;
+        }
+
+        public Builder setLastname(String lastname) {
+            this.lastname = lastname;
+            return this;
+        }
+
+        public Builder setFirstname(String firstname) {
+            this.firstname = firstname;
+            return this;
+        }
+
+        public Builder setBirthdate(Date birthdate) {
+            this.birthdate = birthdate;
+            return this;
+        }
+
+        public Utilisateur build() {
+            if (this.birthdate == null) {
+                this.birthdate = new Date();
+            }
+            if (this.lastname == null) {
+                this.lastname = "";
+            }
+            if (this.firstname == null) {
+                this.firstname = "";
+            }
+            if (this.username == null) {
+                this.username = Generators.randomUsername();
+            }
+            if (this.gender == null) {
+                this.gender = "undefined";
+            }
+            Utilisateur utilisateur = new Utilisateur();
+            utilisateur.firstname = this.firstname;
+            utilisateur.lastname = this.lastname;
+            utilisateur.birthdate = this.birthdate;
+            utilisateur.username = this.username;
+            utilisateur.gender = this.gender;
+            return utilisateur;
+        }
+    }
 }

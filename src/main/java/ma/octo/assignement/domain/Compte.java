@@ -61,4 +61,62 @@ public class Compte {
   public void setId(Long id) {
     this.id = id;
   }
+
+  public static class Builder {
+    private String nrCompte;
+    private String rib;
+    private BigDecimal solde;
+    private Utilisateur utilisateur;
+
+    public Builder() {
+    }
+
+    public Compte.Builder setNrCompte(String nrCompte) {
+      this.nrCompte = nrCompte;
+      return this;
+    }
+
+    public Compte.Builder setRib(String rib) {
+      this.rib = rib;
+      return this;
+    }
+
+    public Compte.Builder setSolde(BigDecimal solde) {
+      this.solde = solde;
+      return this;
+    }
+
+    public Compte.Builder setSolde(int solde) {
+      this.solde = new BigDecimal(solde);
+      return this;
+    }
+
+    public Compte.Builder setSolde(double solde) {
+      this.solde = new BigDecimal(solde);
+      return this;
+    }
+
+    public Compte.Builder setUtilisateur(Utilisateur utilisateur) {
+      this.utilisateur = utilisateur;
+      return this;
+    }
+
+    public Compte build() {
+      if (this.nrCompte == null) {
+        this.nrCompte = "";
+      }
+      if (this.rib == null) {
+        this.rib = "";
+      }
+      if (this.solde == null || this.solde.compareTo(BigDecimal.ZERO) < 0) {
+        this.solde = BigDecimal.ZERO;
+      }
+      Compte compte = new Compte();
+      compte.nrCompte = this.nrCompte;
+      compte.rib = this.rib;
+      compte.solde = this.solde;
+      compte.utilisateur = this.utilisateur;
+      return compte;
+    }
+  }
 }

@@ -2,6 +2,7 @@ package ma.octo.assignement.web.common;
 
 import ma.octo.assignement.exceptions.CompteNonExistantException;
 import ma.octo.assignement.exceptions.SoldeDisponibleInsuffisantException;
+import ma.octo.assignement.exceptions.TransactionException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -19,5 +20,10 @@ public class ExceptionHandelingController {
     @ExceptionHandler(CompteNonExistantException.class)
     public ResponseEntity<String> handleCompteNonExistantException(Exception ex, WebRequest request) {
         return new ResponseEntity<>("Compte introuvable", null, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(TransactionException.class)
+    public ResponseEntity<String> handleTransactionException(Exception ex, WebRequest request) {
+        return new ResponseEntity<>(ex.getMessage(), null, HttpStatus.NOT_ACCEPTABLE);
     }
 }

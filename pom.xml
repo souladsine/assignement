@@ -15,7 +15,9 @@
 	<description>Assignement Stage 2022</description>
 	<properties>
 		<java.version>11</java.version>
+		<maven.executable.path>C:\apache-maven-3.6.3\bin\mvn</maven.executable.path>
 	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -45,7 +47,11 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-	</dependencies>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+        </dependency>
+    </dependencies>
 
 	<build>
 		<plugins>
@@ -63,5 +69,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
 </project>

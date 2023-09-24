@@ -1,16 +1,15 @@
 package ma.octo.assignement.web;
 
 import ma.octo.assignement.domain.Compte;
-import ma.octo.assignement.domain.Virement;
+import ma.octo.assignement.domain.Versement;
 import ma.octo.assignement.domain.util.EventType;
 import ma.octo.assignement.domain.util.TransactionStatus;
-import ma.octo.assignement.dto.VirementDto;
+import ma.octo.assignement.dto.VersementDto;
 import ma.octo.assignement.dto.results.TransactionResult;
 import ma.octo.assignement.exceptions.CompteNonExistantException;
-import ma.octo.assignement.exceptions.SoldeDisponibleInsuffisantException;
 import ma.octo.assignement.exceptions.TransactionException;
 import ma.octo.assignement.repository.CompteRepository;
-import ma.octo.assignement.repository.VirementRepository;
+import ma.octo.assignement.repository.VersementRepository;
 import ma.octo.assignement.service.AuditService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,22 +20,21 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RequestMapping("/virements")
+@RequestMapping("/versements")
 @RestController
-class VirementController {
-
-    Logger LOGGER = LoggerFactory.getLogger(VirementController.class);
+class VersementController {
+    Logger LOGGER = LoggerFactory.getLogger(VersementController.class);
 
     @Autowired
     private CompteRepository compteRepository;
     @Autowired
-    private VirementRepository virementRepository;
+    private VersementRepository versementRepository;
     @Autowired
     private AuditService auditService;
 
     @GetMapping
-    List<Virement> loadAll() {
-        List<Virement> all = virementRepository.findAll();
+    List<Versement> loadAll() {
+        List<Versement> all = versementRepository.findAll();
 
         if (CollectionUtils.isEmpty(all)) {
             return null;
@@ -47,18 +45,18 @@ class VirementController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public TransactionResult createTransaction(@RequestBody VirementDto virementDto)
-            throws SoldeDisponibleInsuffisantException, CompteNonExistantException, TransactionException {
-        Compte compteEmetteur = compteRepository.findByNrCompte(virementDto.getNrCompteEmetteur());
+    public TransactionResult createTransaction(@RequestBody VersementDto versementDto)
+            throws CompteNonExistantException, TransactionException {
+        String nomEmetteur = versementDto.getNomEmetteur();
         Compte compteBeneficiaire = compteRepository
-                .findByNrCompte(virementDto.getNrCompteBeneficiaire());
+                .findByNrCompte(versementDto.getNrCompteBeneficiaire());
 
 
-        Virement v = new Virement.Builder()
-                .setCompteEmetteur(compteEmetteur)
+        Versement v = new Versement.Builder()
+                .setNomEmetteur(nomEmetteur)
                 .setCompteBeneficiaire(compteBeneficiaire)
-                .setMontantVirement(virementDto.getMontantVirement())
-                .setMotifVirement(virementDto.getMotif())
+                .setmontantVersement(versementDto.getMontantVirement())
+                .setMotifVersement(versementDto.getMotif())
                 .build();
 
         TransactionStatus transactionValid = v.getStatus();
@@ -67,33 +65,27 @@ class VirementController {
             LOGGER.error(transactionValid.getMessage());
             throw new CompteNonExistantException(transactionValid.getMessage());
         }
-        if(transactionValid.getType() == TransactionStatus.Type.CREDIT){
-            LOGGER.error(transactionValid.getMessage());
-            throw new SoldeDisponibleInsuffisantException(transactionValid.getMessage());
-        }
         if(transactionValid.getType() == TransactionStatus.Type.TRANSACTION){
             LOGGER.error(transactionValid.getMessage());
             throw new TransactionException(transactionValid.getMessage());
         }
 
-        compteEmetteur.setSolde(compteEmetteur.getSolde().subtract(virementDto.getMontantVirement()));
-        compteRepository.save(compteEmetteur);
-
         compteBeneficiaire
-                .setSolde(compteBeneficiaire.getSolde().add(virementDto.getMontantVirement()));
+                .setSolde(compteBeneficiaire.getSolde().add(versementDto.getMontantVirement()));
         compteRepository.save(compteBeneficiaire);
 
-        virementRepository.save(v);
+        versementRepository.save(v);
 
         TransactionResult result = new TransactionResult();
-        result.setAmount(virementDto.getMontantVirement());
-        result.setFrom(compteEmetteur);
+        result.setAmount(versementDto.getMontantVirement());
+        result.setFrom(nomEmetteur);
         result.setTo(compteBeneficiaire);
-        result.setMotif(virementDto.getMotif());
+        result.setMotif(versementDto.getMotif());
         result.setStatus(v.getStatus());
-        result.setType(EventType.VIREMENT);
+        result.setType(EventType.VERSEMENT);
 
-        auditService.auditVirement(result.toString());
+
+        auditService.auditVersement(result.toString());
 
         return result;
     }
