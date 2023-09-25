@@ -6,6 +6,7 @@ import ma.octo.assignement.domain.util.TransactionStatus;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Objects;
 
 
 @Entity
@@ -22,10 +23,10 @@ public class Virement implements StatefulTransaction {
   @Temporal(TemporalType.TIMESTAMP)
   private Date dateExecution;
 
-  @ManyToOne
+  @ManyToOne(cascade = CascadeType.ALL)
   private Compte compteEmetteur;
 
-  @ManyToOne
+  @ManyToOne(cascade = CascadeType.ALL)
   private Compte compteBeneficiaire;
 
   @Column(length = 200)
@@ -77,6 +78,39 @@ public class Virement implements StatefulTransaction {
 
   public void setId(Long id) {
     this.id = id;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    Virement virement = (Virement) o;
+
+    if (!Objects.equals(id, virement.id)) return false;
+    if (!Objects.equals(montantVirement, virement.montantVirement))
+      return false;
+    if (!Objects.equals(dateExecution, virement.dateExecution))
+      return false;
+    if (!Objects.equals(compteEmetteur, virement.compteEmetteur))
+      return false;
+    if (!Objects.equals(compteBeneficiaire, virement.compteBeneficiaire))
+      return false;
+    if (!Objects.equals(motifVirement, virement.motifVirement))
+      return false;
+    return status == virement.status;
+  }
+
+  @Override
+  public int hashCode() {
+    int result = id != null ? id.hashCode() : 0;
+    result = 31 * result + (montantVirement != null ? montantVirement.hashCode() : 0);
+    result = 31 * result + (dateExecution != null ? dateExecution.hashCode() : 0);
+    result = 31 * result + (compteEmetteur != null ? compteEmetteur.hashCode() : 0);
+    result = 31 * result + (compteBeneficiaire != null ? compteBeneficiaire.hashCode() : 0);
+    result = 31 * result + (motifVirement != null ? motifVirement.hashCode() : 0);
+    result = 31 * result + (status != null ? status.hashCode() : 0);
+    return result;
   }
 
   //STATUS

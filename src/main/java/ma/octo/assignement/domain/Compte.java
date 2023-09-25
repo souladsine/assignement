@@ -2,6 +2,7 @@ package ma.octo.assignement.domain;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.Objects;
 
 @Entity
 @Table(name = "COMPTE")
@@ -18,7 +19,7 @@ public class Compte {
   @Column(precision = 16, scale = 2)
   private BigDecimal solde;
 
-  @ManyToOne()
+  @ManyToOne(cascade = CascadeType.ALL)
   @JoinColumn(name = "utilisateur_id")
   private Utilisateur utilisateur;
 
@@ -60,6 +61,30 @@ public class Compte {
 
   public void setId(Long id) {
     this.id = id;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    Compte compte = (Compte) o;
+
+    if (!Objects.equals(id, compte.id)) return false;
+    if (!Objects.equals(nrCompte, compte.nrCompte)) return false;
+    if (!Objects.equals(rib, compte.rib)) return false;
+    if (!Objects.equals(solde, compte.solde)) return false;
+    return Objects.equals(utilisateur, compte.utilisateur);
+  }
+
+  @Override
+  public int hashCode() {
+    int result = id != null ? id.hashCode() : 0;
+    result = 31 * result + (nrCompte != null ? nrCompte.hashCode() : 0);
+    result = 31 * result + (rib != null ? rib.hashCode() : 0);
+    result = 31 * result + (solde != null ? solde.hashCode() : 0);
+    result = 31 * result + (utilisateur != null ? utilisateur.hashCode() : 0);
+    return result;
   }
 
   public static class Builder {

@@ -6,6 +6,7 @@ import ma.octo.assignement.domain.util.TransactionStatus;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Objects;
 
 @Entity
 @Table(name = "VERSEMENT")
@@ -24,7 +25,7 @@ public class Versement implements StatefulTransaction {
   @Column(name = "nom_prenom_emetteur")
   private String nomEmetteur;
 
-  @ManyToOne
+  @ManyToOne(cascade = CascadeType.ALL)
   private Compte compteBeneficiaire;
 
   @Column(length = 200)
@@ -76,6 +77,38 @@ public class Versement implements StatefulTransaction {
 
   public void setNomEmetteur(String nomEmetteur) {
     this.nomEmetteur = nomEmetteur;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    Versement versement = (Versement) o;
+
+    if (!Objects.equals(id, versement.id)) return false;
+    if (!Objects.equals(montantVirement, versement.montantVirement))
+      return false;
+    if (!Objects.equals(dateExecution, versement.dateExecution))
+      return false;
+    if (!Objects.equals(nomEmetteur, versement.nomEmetteur)) return false;
+    if (!Objects.equals(compteBeneficiaire, versement.compteBeneficiaire))
+      return false;
+    if (!Objects.equals(motifVersement, versement.motifVersement))
+      return false;
+    return status == versement.status;
+  }
+
+  @Override
+  public int hashCode() {
+    int result = id != null ? id.hashCode() : 0;
+    result = 31 * result + (montantVirement != null ? montantVirement.hashCode() : 0);
+    result = 31 * result + (dateExecution != null ? dateExecution.hashCode() : 0);
+    result = 31 * result + (nomEmetteur != null ? nomEmetteur.hashCode() : 0);
+    result = 31 * result + (compteBeneficiaire != null ? compteBeneficiaire.hashCode() : 0);
+    result = 31 * result + (motifVersement != null ? motifVersement.hashCode() : 0);
+    result = 31 * result + (status != null ? status.hashCode() : 0);
+    return result;
   }
 
   //STATUS

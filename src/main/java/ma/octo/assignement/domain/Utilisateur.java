@@ -5,6 +5,7 @@ import ma.octo.assignement.domain.util.Generators;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Objects;
 
 @Entity
 @Table(name = "UTILISATEUR")
@@ -27,6 +28,32 @@ public class Utilisateur implements Serializable {
 
     @Temporal(TemporalType.DATE)
     private Date birthdate;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Utilisateur that = (Utilisateur) o;
+
+        if (!Objects.equals(id, that.id)) return false;
+        if (!Objects.equals(username, that.username)) return false;
+        if (!Objects.equals(gender, that.gender)) return false;
+        if (!Objects.equals(lastname, that.lastname)) return false;
+        if (!Objects.equals(firstname, that.firstname)) return false;
+        return Objects.equals(birthdate, that.birthdate);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (username != null ? username.hashCode() : 0);
+        result = 31 * result + (gender != null ? gender.hashCode() : 0);
+        result = 31 * result + (lastname != null ? lastname.hashCode() : 0);
+        result = 31 * result + (firstname != null ? firstname.hashCode() : 0);
+        result = 31 * result + (birthdate != null ? birthdate.hashCode() : 0);
+        return result;
+    }
 
     public Long getId() {
         return id;
