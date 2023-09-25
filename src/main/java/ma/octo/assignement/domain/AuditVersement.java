@@ -11,7 +11,7 @@ public class AuditVersement {
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
 
-  @Column(length = 100)
+  @Column(length = 254)
   private String message;
 
   @Enumerated(EnumType.STRING)
